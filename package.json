@@ -7,7 +7,7 @@
     "dev": "next",
     "build": "next build",
     "preexport": "npm run build",
-    "export": "next export",
+    "export": "next export -o docs",
     "prestart": "npm run export",
     "start": "serve out"
   },
