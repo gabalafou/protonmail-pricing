@@ -7,7 +7,7 @@
     "dev": "next",
     "build": "next build",
     "preexport": "npm run build",
-    "export": "next export -o docs",
+    "export": "next export -o docs && touch docs/.nojekyll",
     "predeploy": "NODE_ENV=production rm -rf .next docs && npm run export",
     "prestart": "npm run export",
     "start": "serve docs"
