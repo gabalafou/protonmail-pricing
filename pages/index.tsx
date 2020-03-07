@@ -1,51 +1,94 @@
 import React from 'react';
 import fetch from 'isomorphic-unfetch';
+import Plan from '../components/plan';
+import { PricingApiResponse, Plan as PlanType, PlanName } from '../types';
 
 
-Home.getInitialProps = async () => {
-  return {
-    planData: await getPlans()
-  };
-}
+const defaultCurrency = 'EUR';
 
-export default function Home(props: {planData: PlanData}) {
-  const { planData } = props;
+// TODO later: build static pages with embedded data that gets hydrated from API
+// Home.getInitialProps = async () => {
+//   const currency = defaultCurrency;
+//   return {
+//     planData: await getPlans(currency),
+//     currency,
+//   };
+// }
 
-  const [planDataUsd, setPlanDataUsd]:
-    [PlanData | void, React.SetStateAction<PlanData | void> ] = React.useState();
+export default function Home() {
+  const [planData, setPlanData]:
+    [PricingApiResponse | void, React.SetStateAction<PricingApiResponse | void>]
+    = React.useState();
 
-  const planDataString = JSON.stringify(planDataUsd || planData);
+  const [billingPeriod, setBillingPeriod] = React.useState(1);
+
+  const [currency, setCurrency] = React.useState(defaultCurrency);
+
+  React.useEffect(() => {
+    getPlans(currency).then(setPlanData);
+  }, [getPlans, currency]);
 
   return (
     <div>
-      <button  onClick={async () => setPlanDataUsd(await getPlans('USD'))}>
-        Change to USD
-      </button><br />
-      Plan data: <br />
-      <textarea
-        value={planDataString}
-        readOnly={true}
-        cols={120}
-        rows={50}
-      />
-      <input
-        type="hidden"
-        name="release-tag"
-        // Put a unique string here whenever building and exporting
-        // for Github Pages, so you can when your updates have actually
-        // been deployed to Github Pages
-        value="ondemandusd"
-      />
+      <select
+        value={billingPeriod}
+        onChange={event => setBillingPeriod(Number(event.currentTarget.value))}
+      >
+        <option value={1}>Monthly</option>
+        <option value={12}>Annually</option>
+        <option value={24}>Two years</option>
+      </select>
+      <select
+        value={currency}
+        onChange={event => {
+          setCurrency(event.currentTarget.value)
+        }}
+      >
+        <option title="Euros">EUR</option>
+        <option title="US dollars">USD</option>
+        <option title="Swiss francs">CHF</option>
+      </select>
+      <ul>
+        {Boolean(planData) && Boolean((planData as PricingApiResponse).Plans) &&
+          [makeFreePlan(currency), ...(planData as PricingApiResponse).Plans]
+            .filter(planFilter)
+            .sort((a, b) => a.Amount - b.Amount)
+            .map(plan => (
+              <li key={plan.ID}>
+                <Plan plan={plan} period={billingPeriod as 1 | 12 | 24} />
+              </li>
+            ))
+        }
+      </ul>
     </div>
 
   );
 }
 
-type PlanData = {
-  Plans: [],
+function makeFreePlan(currency: string = defaultCurrency): PlanType {
+  return {
+    ID: 'free',
+    Name: PlanName.FREE,
+    MaxMembers: 1,
+    MaxSpace: 500000000,
+    MaxAddresses: 1,
+    MaxDomains: 0,
+    MaxVPN: 0,
+    Pricing: {
+      1: 0,
+      12: 0,
+      24: 0,
+    },
+    Currency: currency,
+    Amount: 0,
+  }
 };
 
-async function getPlans(currency: string = 'EUR'): Promise<PlanData | void> {
+function planFilter(plan: PlanType) {
+  return Object.values(PlanName).includes(plan.Name);
+}
+
+async function getPlans(currency: string = defaultCurrency): Promise<PricingApiResponse | void> {
   const myHeaders = {
     'Content-Type': 'application/json;charset=utf-8',
     'x-pm-appversion': 'Other',
