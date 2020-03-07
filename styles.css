@@ -1,5 +1,6 @@
 body {
-  font-size: 10pt;
+  font: 14px/1.4 Arial,Helvetica,sans-serif;
+  color: #505061;
 }
 
 .plan-list {
@@ -11,7 +12,7 @@ body {
 }
 
 .plan-list > li {
-  flex: 1;
+  flex: 1 0 0;
   flex-direction: column;
   list-style: none;
   border: #dedede solid 1px;

@@ -14,7 +14,7 @@ export default function Plan(props: Props) {
       <div className={styles.main}>
         <div className={styles.color}>{plan.Name === PlanName.PLUS && 'Most popular'}</div>
         <div className={styles.title}>{title(plan)}</div>
-        <div>
+        <div className={styles.pricingContainer}>
           <span>{currencySymbol(plan)}</span>
           <span className={styles.price}>{price(plan, period)}</span>
           <span>/{billingPeriod(plan, period)}</span>
@@ -32,7 +32,7 @@ export default function Plan(props: Props) {
             <li>{numberOfEmailAddresses(plan)}</li>
             <li>{numberOfDomains(plan)}</li>
             {otherFeatures(plan) &&
-              <li>{otherFeatures(plan)}</li>
+              <li className={styles.otherFeatures}>{otherFeatures(plan)}</li>
             }
             {plan.Name === PlanName.VISIONARY &&
               <li>Priority support</li>
@@ -71,7 +71,7 @@ const currencySymbols: {[code: string]: string} = {
 };
 
 function currencySymbol(plan: PlanType) {
-  return currencySymbols[plan.Currency] || plan.Currency;
+  return currencySymbols[plan.Currency] || `${plan.Currency} `;
 }
 
 function price(plan: PlanType, period: Props['period']) {
@@ -168,6 +168,6 @@ function protonVpn(plan: PlanType) {
   if (plan.MaxVPN > 0) {
     return 'Includes ProtonVPN';
   } else {
-    return 'ProtonVPN (optional add-on)';
+    return <span>ProtonVPN (optional)</span>;
   }
 }
