@@ -60,8 +60,15 @@ export default function Home() {
             ))
         }
       </ul>
+      <input
+        type="hidden"
+        name="release-tag"
+        // Put a unique string here whenever building and exporting
+        // for Github Pages, so you can when your updates have actually
+        // been deployed to Github Pages
+        value="fugtional"
+      />
     </div>
-
   );
 }
 
