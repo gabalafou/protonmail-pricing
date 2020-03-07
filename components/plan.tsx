@@ -1,4 +1,5 @@
 import { Plan as PlanType, PlanName } from '../types';
+import styles from './plan.module.css';
 
 
 type Props = {
@@ -9,33 +10,40 @@ type Props = {
 export default function Plan(props: Props) {
   const { plan, period } = props;
   return (
-    <div>
-      {plan.Name === PlanName.PLUS &&
-        <div>Most popular</div>
-      }
-      <div>{title(plan)}</div>
-      <div>
-        <span>{currencySymbol(plan)}</span>
-        <span>{price(plan, period)}</span>
-        <span>/{billingPeriod(plan, period)}</span>
+    <div className={styles.container}>
+      <div className={styles.main}>
+        <div className={styles.color}>{plan.Name === PlanName.PLUS && 'Most popular'}</div>
+        <div className={styles.title}>{title(plan)}</div>
+        <div>
+          <span>{currencySymbol(plan)}</span>
+          <span className={styles.price}>{price(plan, period)}</span>
+          <span>/{billingPeriod(plan, period)}</span>
+        </div>
+        {period === 1 &&
+          <div className={styles.billedAs}>
+            Billed as {currencySymbol(plan)}{price(plan, period) * 12} per year
+          </div>
+        }
+        <div className={styles.descriptionAndFeatures}>
+          <div className={styles.description}>{description(plan)}</div>
+          <ul className={styles.planFeatures}>
+            <li>{numberOfUsers(plan)}</li>
+            <li>{storage(plan)}</li>
+            <li>{numberOfEmailAddresses(plan)}</li>
+            <li>{numberOfDomains(plan)}</li>
+            {otherFeatures(plan) &&
+              <li>{otherFeatures(plan)}</li>
+            }
+            {plan.Name === PlanName.VISIONARY &&
+              <li>Priority support</li>
+            }
+            <li>{protonVpn(plan)}</li>
+          </ul>
+        </div>
       </div>
-      {period === 1 &&
-        <div>Billed as {price(plan, period) * 12} per year</div>
-      }
-      <div>{description(plan)}</div>
-      <ul>
-        <li>{numberOfUsers(plan)}</li>
-        <li>{storage(plan)}</li>
-        <li>{numberOfEmailAddresses(plan)}</li>
-        <li>{numberOfDomains(plan)}</li>
-        {otherFeatures(plan) &&
-          <li>{otherFeatures(plan)}</li>
-        }
-        {plan.Name === PlanName.VISIONARY &&
-          <li>Priority support</li>
-        }
-        <li>{protonVpn(plan)}</li>
-      </ul>
+      <div className={styles.footer}>
+        <button className={styles.button}>Select</button>
+      </div>
     </div>
   );
 }
@@ -46,6 +54,8 @@ function title(plan: PlanType) {
 
 function description(plan: PlanType) {
   switch(plan.Name) {
+    case PlanName.FREE:
+      return 'The basics for private and secure communication';
     case PlanName.PLUS:
       return 'Full-featured mailbox with advanced protection';
     case PlanName.PROFESSIONAL:

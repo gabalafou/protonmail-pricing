@@ -16,16 +16,17 @@ const defaultCurrency = 'EUR';
 // }
 
 export default function Home() {
-  const [planData, setPlanData]:
-    [PricingApiResponse | void, React.SetStateAction<PricingApiResponse | void>]
-    = React.useState();
+  const [plans, setPlans] = React.useState(([] as PlanType[]));
+  const [error, setError] = React.useState('');
 
   const [billingPeriod, setBillingPeriod] = React.useState(1);
 
   const [currency, setCurrency] = React.useState(defaultCurrency);
 
   React.useEffect(() => {
-    getPlans(currency).then(setPlanData);
+    getPlans(currency)
+      .then(setPlans)
+      .catch(() => setError('Could not fetch data. See console'));
   }, [getPlans, currency]);
 
   return (
@@ -48,18 +49,20 @@ export default function Home() {
         <option title="US dollars">USD</option>
         <option title="Swiss francs">CHF</option>
       </select>
-      <ul>
-        {Boolean(planData) && Boolean((planData as PricingApiResponse).Plans) &&
-          [makeFreePlan(currency), ...(planData as PricingApiResponse).Plans]
-            .filter(planFilter)
-            .sort((a, b) => a.Amount - b.Amount)
-            .map(plan => (
-              <li key={plan.ID}>
-                <Plan plan={plan} period={billingPeriod as 1 | 12 | 24} />
-              </li>
-            ))
+      <ul className="plan-list">
+        {plans
+          .filter(planFilter)
+          .sort((a, b) => a.Amount - b.Amount)
+          .map(plan => (
+            <li key={plan.ID}>
+              <Plan plan={plan} period={billingPeriod as 1 | 12 | 24} />
+            </li>
+          ))
         }
       </ul>
+      {error &&
+        <div>Error fetching price and plan data. See console.</div>
+      }
       <input
         type="hidden"
         name="release-tag"
@@ -95,7 +98,20 @@ function planFilter(plan: PlanType) {
   return Object.values(PlanName).includes(plan.Name);
 }
 
-async function getPlans(currency: string = defaultCurrency): Promise<PricingApiResponse | void> {
+async function getPlans(currency: string = defaultCurrency): Promise<PlanType[]> {
+  return fetchPlans(currency)
+    .then(response => {
+      if (response.ok) {
+        return response.json().then((data: PricingApiResponse) =>
+          [makeFreePlan(currency), ...data.Plans]
+        );
+      } else {
+        return [];
+      }
+    });
+};
+
+async function fetchPlans(currency: string) {
   const myHeaders = {
     'Content-Type': 'application/json;charset=utf-8',
     'x-pm-appversion': 'Other',
@@ -109,17 +125,5 @@ async function getPlans(currency: string = defaultCurrency): Promise<PricingApiR
     mode: 'cors',
     cache: "default"
   };
-  return fetch(`https://api.protonmail.ch/payments/plans?Currency=${currency}`, myInit)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        console.error("Fetching plans failed.");
-        return;
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      return;
-    });
-};
+  return fetch(`https://api.protonmail.ch/payments/plans?Currency=${currency}`, myInit);
+}

@@ -1,0 +1,76 @@
+.container {
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.color {
+  color: green;
+  text-align: center;
+  text-transform: uppercase;
+  height: 1em;
+  margin-bottom: 1em;
+}
+
+.title {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.price {
+  font-size: 2em;
+}
+
+.billedAs {
+  white-space: nowrap;
+}
+
+/*
+This keeps the list items left-align with the description
+.descriptionAndFeatures {
+}
+*/
+
+.description {
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 3em;
+  margin-bottom: 2em;
+}
+
+.planFeatures {
+  padding-left: 0;
+  align-self: flex-start;
+}
+
+.planFeatures > li {
+  list-style-type: none;
+  margin-bottom: 0.6em;
+}
+
+.planFeatures > li::before {
+  content: '→';
+  margin-right: 1ex;
+}
+
+.footer {
+  margin-top: 25px;
+}
+
+.button {
+  color: white;
+  background-color: #9199cb;
+  border-radius: 2px;
+  border-width: 0;
+  padding: 0.6em 1.5em;
+}
