@@ -1,6 +1,20 @@
-body {
-  font: 14px/1.4 Arial,Helvetica,sans-serif;
-  color: #505061;
+.plan-filters {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-bottom: 1em;
+}
+
+.plan-filter {
+  appearance: none;
+  background-color: white;
+  background-image: url(/arrow_drop_down-24px.svg);
+  background-position: top 50% right 5px;
+  background-repeat: no-repeat;
+  border-color: #dedede;
+  color: inherit;
+  margin-left: 0.5em;
+  padding: 4px 20px 4px 10px;
 }
 
 .plan-list {

@@ -31,24 +31,29 @@ export default function Home() {
 
   return (
     <div>
-      <select
-        value={billingPeriod}
-        onChange={event => setBillingPeriod(Number(event.currentTarget.value))}
-      >
-        <option value={1}>Monthly</option>
-        <option value={12}>Annually</option>
-        <option value={24}>Two years</option>
-      </select>
-      <select
-        value={currency}
-        onChange={event => {
-          setCurrency(event.currentTarget.value)
-        }}
-      >
-        <option title="Euros">EUR</option>
-        <option title="US dollars">USD</option>
-        <option title="Swiss francs">CHF</option>
-      </select>
+      <h1>Plans &amp; prices</h1>
+      <div className="plan-filters">
+        <select
+          value={billingPeriod}
+          onChange={event => setBillingPeriod(Number(event.currentTarget.value))}
+          className="plan-filter"
+        >
+          <option value={1}>Monthly</option>
+          <option value={12}>Annually</option>
+          <option value={24}>Two years</option>
+        </select>
+        <select
+          value={currency}
+          onChange={event => {
+            setCurrency(event.currentTarget.value)
+          }}
+          className="plan-filter"
+        >
+          <option title="Euros">EUR</option>
+          <option title="US dollars">USD</option>
+          <option title="Swiss francs">CHF</option>
+        </select>
+      </div>
       <ul className="plan-list">
         {plans
           .filter(planFilter)
