@@ -74,7 +74,7 @@ export default function Home() {
         // Put a unique string here whenever building and exporting
         // for Github Pages, so you can when your updates have actually
         // been deployed to Github Pages
-        value="fugtional"
+        value="bootstrap"
       />
     </div>
   );
