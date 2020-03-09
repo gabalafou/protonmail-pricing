@@ -11,6 +11,7 @@ https://gabalafou.github.io/protonmail-pricing
 ```
 git clone git@github.com:gabalafou/protonmail-pricing.git
 cd protonmail-pricing
+npm install
 npm run start
 ```
 
