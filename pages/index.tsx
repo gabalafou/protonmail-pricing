@@ -38,12 +38,9 @@ export default function Home(props: Props) {
   React.useEffect(() => {
     setPlans([]);
     getPlans(currency)
-      .then(plans => {
-        if (plans.length) {
-          setPlans(plans);
-        } else {
-          setError('Note: Unable to fetch latest data. Prices and plan details may be out of date.');
-        }
+      .then(setPlans)
+      .catch(() => {
+        setError('Note: Unable to fetch latest data. Prices and plan details may be out of date.');
       });
   }, [getPlans, currency]);
 
@@ -75,6 +72,9 @@ export default function Home(props: Props) {
           <option title="Swiss francs">CHF</option>
         </select>
       </div>
+      {error &&
+        <div>{error}</div>
+      }
       <ul className="plan-list">
         {currentPlans
           .filter(planFilter)
@@ -86,9 +86,6 @@ export default function Home(props: Props) {
           ))
         }
       </ul>
-      {error &&
-        <div>{error}</div>
-      }
       <input
         type="hidden"
         name="release-tag"
@@ -132,7 +129,7 @@ async function getPlans(currency: string): Promise<PlanType[]> {
           [makeFreePlan(currency), ...data.Plans]
         );
       } else {
-        return [];
+        throw new Error();
       }
     });
 };
