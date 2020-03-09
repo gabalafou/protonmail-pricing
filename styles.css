@@ -8,13 +8,15 @@
 .plan-filter {
   appearance: none;
   background-color: white;
-  background-image: url(/arrow_drop_down-24px.svg);
-  background-position: top 50% right 5px;
+  background-image:
+    /* svg modified from Material Design: https://material.io/resources/icons/?icon=arrow_drop_down&style=baseline */
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M7 10l5 5 5-5z" fill="%23dedede"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+  background-position: top 50% right 2px;
   background-repeat: no-repeat;
   border-color: #dedede;
   color: inherit;
   margin-left: 0.5em;
-  padding: 4px 20px 4px 10px;
+  padding: 4px 25px 4px 10px;
 }
 
 .plan-list {
