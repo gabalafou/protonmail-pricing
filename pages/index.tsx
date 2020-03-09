@@ -95,7 +95,7 @@ export default function Home(props: Props) {
         // Put a unique string here whenever building and exporting
         // for Github Pages, so you can see when Github has deployed
         // your changes to the web
-        value="inlinesvg"
+        value="hydration"
       />
     </div>
   );
