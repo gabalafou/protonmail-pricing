@@ -1,6 +1,9 @@
+console.debug('process.env.NODE_ENV =', process.env.NODE_ENV);
+
 const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
-  // Use the CDN in production and localhost for development.
-  assetPrefix: isProd ? 'https://gabalafou.github.io/protonmail-pricing' : '',
-}
+  // On production (i.e., GitHub Pages), the site is served under /protonmail-pricing.
+  // When developing, the site is served under /
+  assetPrefix: isProd ? '/protonmail-pricing' : '',
+};
