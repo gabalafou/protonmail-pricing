@@ -6,27 +6,45 @@ import { PricingApiResponse, Plan as PlanType, PlanName } from '../types';
 
 const defaultCurrency = 'EUR';
 
-// TODO later: build static pages with embedded data that gets hydrated from API
-// Home.getInitialProps = async () => {
-//   const currency = defaultCurrency;
-//   return {
-//     planData: await getPlans(currency),
-//     currency,
-//   };
-// }
+Home.getInitialProps = async () => {
+  const plansByCurrency = {
+    EUR: await getPlans('EUR'),
+    USD: await getPlans('USD'),
+    CHF: await getPlans('CHF')
+  };
 
-export default function Home() {
-  const [plans, setPlans] = React.useState(([] as PlanType[]));
+  return {
+    plansByCurrency,
+    currency: defaultCurrency,
+  };
+}
+
+type Props = {
+  plansByCurrency: {[currencyCode: string]: PlanType[]},
+  currency: string,
+};
+
+export default function Home(props: Props) {
+  const {plansByCurrency, currency: defaultCurrency} = props;
+  const [plans, setPlans] = React.useState([] as PlanType[]);
   const [error, setError] = React.useState('');
 
   const [billingPeriod, setBillingPeriod] = React.useState(1);
 
   const [currency, setCurrency] = React.useState(defaultCurrency);
 
+  let currentPlans = (plans && plans.length > 0) ? plans : plansByCurrency[currency];
+
   React.useEffect(() => {
+    setPlans([]);
     getPlans(currency)
-      .then(setPlans)
-      .catch(() => setError('Could not fetch data. See console'));
+      .then(plans => {
+        if (plans.length) {
+          setPlans(plans);
+        } else {
+          setError('Note: Unable to fetch latest data. Prices and plan details may be out of date.');
+        }
+      });
   }, [getPlans, currency]);
 
   return (
@@ -35,7 +53,10 @@ export default function Home() {
       <div className="plan-filters">
         <select
           value={billingPeriod}
-          onChange={event => setBillingPeriod(Number(event.currentTarget.value))}
+          onChange={event => {
+            console.log(typeof event.currentTarget.value, event.currentTarget.value);
+            setBillingPeriod(Number(event.currentTarget.value))
+          }}
           className="plan-filter"
         >
           <option value={1}>Monthly</option>
@@ -55,7 +76,7 @@ export default function Home() {
         </select>
       </div>
       <ul className="plan-list">
-        {plans
+        {currentPlans
           .filter(planFilter)
           .sort((a, b) => a.Amount - b.Amount)
           .map(plan => (
@@ -66,21 +87,21 @@ export default function Home() {
         }
       </ul>
       {error &&
-        <div>Error fetching price and plan data. See console.</div>
+        <div>{error}</div>
       }
       <input
         type="hidden"
         name="release-tag"
         // Put a unique string here whenever building and exporting
-        // for Github Pages, so you can when your updates have actually
-        // been deployed to Github Pages
+        // for Github Pages, so you can see when Github has deployed
+        // your changes to the web
         value="inlinesvg"
       />
     </div>
   );
 }
 
-function makeFreePlan(currency: string = defaultCurrency): PlanType {
+function makeFreePlan(currency: string): PlanType {
   return {
     ID: 'free',
     Name: PlanName.FREE,
@@ -99,11 +120,11 @@ function makeFreePlan(currency: string = defaultCurrency): PlanType {
   }
 };
 
-function planFilter(plan: PlanType) {
+function planFilter(plan: PlanType): boolean {
   return Object.values(PlanName).includes(plan.Name);
 }
 
-async function getPlans(currency: string = defaultCurrency): Promise<PlanType[]> {
+async function getPlans(currency: string): Promise<PlanType[]> {
   return fetchPlans(currency)
     .then(response => {
       if (response.ok) {
