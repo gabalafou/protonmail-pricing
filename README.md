@@ -15,7 +15,7 @@ npm install
 npm run start:dev
 ```
 
-# docs/ is actually more like build/
+# docs/ more like build/
 
 The `docs/` directory in this repo does not contain documentation.
 It's simply the directory that Github Pages is configured to recognize
